@@ -53,6 +53,22 @@ const postController = {
     .catch(err => res.status(400).json(err));
    },
 
+   updatePost({ params, body }, res) {
+    Post.findOneAndUpdate(
+        { _id: params.id},
+        body,
+        { new: true }
+    )
+    .then(dbPostData => {
+        if(!dbPostData) {
+            res.status(404).json({ message: 'No thought found with this id' });
+            return;
+        }
+        res.status(200).json(dbPostData);
+    })
+    .catch(err => res.status(500).json(err));
+   },
+
    // DELETE route
    deletePost({ params }, res) {
     Post.findOneAndDelete({ _id: params.id })
