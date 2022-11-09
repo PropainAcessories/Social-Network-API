@@ -1,11 +1,11 @@
 const { Schema, model, Types } = require('mongoose');
 
 const commentSchema = new Schema({
-    postId: {
+    commentId: {
         type: Types.ObjectId,
         default: new Types.ObjectId()
     },
-    postBody: {
+    commentBody: {
         type: String,
         required: true,
         maxLength: 280
