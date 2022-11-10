@@ -1,11 +1,11 @@
 const { Schema, model, Types } = require('mongoose');
 
-const commentSchema = new Schema({
-    commentId: {
+const reactionSchema = new Schema({
+    reactionId: {
         type: Types.ObjectId,
         default: new Types.ObjectId()
     },
-    commentBody: {
+    reactionBody: {
         type: String,
         required: true,
         maxLength: 280
@@ -26,4 +26,4 @@ const commentSchema = new Schema({
     id: false
 });
 
-module.exports = commentSchema;
+module.exports = reactionSchema;

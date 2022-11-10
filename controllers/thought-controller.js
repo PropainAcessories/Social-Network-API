@@ -1,30 +1,30 @@
-const { User, Post, Comment } = require('../models');
+const { User, Thought, Reaction } = require('../models');
 const { db } = require('../models/User');
 // GET all posts
-const postController = {
-   getAllPosts(req, res) {
+const thoughtController = {
+   getAllThoughts(req, res) {
     try {
-        const postData = Post.find({})
-        .populate({ path: 'comments', select: '-__v' })
+        const thoughtData = Thought.find({})
+        .populate({ path: 'reactions', select: '-__v' })
         .select('-__v')
 
-        res.status(200).json(postData)
+        res.status(200).json(thoughtData)
     } catch (err) {
         res.status(500).json(err)
     }
    },
 
    // GET route by ID
-   getPostById({ params }, res) {
-    Post.findOne({ _id: params.id })
-    .populate({ path: 'comments', select: '-__v' })
+   getThoughtById({ params }, res) {
+    Thought.findOne({ _id: params.id })
+    .populate({ path: 'reactions', select: '-__v' })
     .select('-__v')
-    .then(dbPostData => {
-        if(!dbPostData) {
+    .then(dbThoughtData => {
+        if(!dbThoughtData) {
             res.status(404).json({ message: 'No Post found' });
             return;
         }
-        res.status(200).json(dbPostData);
+        res.status(200).json(dbThoughtData);
     })
     .catch(err => {
         console.log(err);
@@ -33,12 +33,12 @@ const postController = {
    },
 
    // POST route
-   createPost({ body }, res) {
-    Post.create(body)
-    .then(dbPostData => {
+   createThought({ body }, res) {
+    Thought.create(body)
+    .then(dbThoughtData => {
         User.findOneAndUpdate(
             { _id: body.userId},
-            { $push: { posts: dbPostData._id } },
+            { $push: { Thoughts: dbThoughtData._id } },
             { new: true }
         )
         .then(dbUserData => {
@@ -53,33 +53,33 @@ const postController = {
     .catch(err => res.status(400).json(err));
    },
 
-   updatePost({ params, body }, res) {
-    Post.findOneAndUpdate(
+   updateThought({ params, body }, res) {
+    Thought.findOneAndUpdate(
         { _id: params.id},
         body,
         { new: true }
     )
-    .then(dbPostData => {
-        if(!dbPostData) {
+    .then(dbThoughtData => {
+        if(!dbThoughtData) {
             res.status(404).json({ message: 'No thought found with this id' });
             return;
         }
-        res.status(200).json(dbPostData);
+        res.status(200).json(dbThoughtData);
     })
     .catch(err => res.status(500).json(err));
    },
 
    // DELETE route
-   deletePost({ params }, res) {
-    Post.findOneAndDelete({ _id: params.id })
-    .then(dbPostData => {
-        if(!dbPostData) {
+   deleteThought({ params }, res) {
+    Thought.findOneAndDelete({ _id: params.id })
+    .then(dbThoughtData => {
+        if(!dbThoughtData) {
             res.status(404).json({ message: 'No Post found' });
             return;
         }
-        User.findByIdAndUpdate(
-            { username: dbPostData.username },
-            { $pull: { posts: params.id } }
+        User.findOneAndUpdate(
+            { username: dbThoughtData.username },
+            { $pull: { Thoughts: params.id } }
         )
         .then(() => {
             res.json({message: 'Deleted' });
@@ -90,31 +90,31 @@ const postController = {
    },
 
    //POST comments
-   addComment({ params, body }, res) {
-    Post.findOneAndUpdate(
-        { _id: params.postId },
-        { $addToSet: { comments: body } },
+   addReaction({ params, body }, res) {
+    Thought.findOneAndUpdate(
+        { _id: params.ThoughtId },
+        { $addToSet: { reactions: body } },
         {new: true, runValidators: true}
     )
-    .then(dbPostData => {
-        if(!dbPostData) {
+    .then(dbThoughtData => {
+        if(!dbThoughtData) {
             res.status(404).json({ message: 'No Post Found '});
             return;
         }
-        res.status(200).json(dbPostData);
+        res.status(200).json(dbThoughtData);
     })
     .catch(err => res.status(500).json(err));
    },
    
    //DELETE comments
-   deleteComment({ params, body }, res) {
-    Post.findOneAndUpdate(
-        { _id: params.postId },
-        { $pull: { comments: { commentId: body.commentId } } },
+   deleteReaction({ params, body }, res) {
+    Thought.findOneAndUpdate(
+        { _id: params.ThoughtId },
+        { $pull: { reactions: { reactionId: body.reactionId } } },
         { new: true, runValidators: true }
     )
-    .then(dbPostData => {
-        if(!dbPostData) {
+    .then(dbThoughtData => {
+        if(!dbThoughtData) {
             res.status(404).json({ message: 'No Post Found' });
             return;
         }
@@ -124,4 +124,4 @@ const postController = {
    },
 }
 
-module.exports = postController;
+module.exports = thoughtController;
