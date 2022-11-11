@@ -45,3 +45,6 @@
   🐔My Github: [PropainAcessories](https://github.com/undefined)<br/>
   <br/>
   🐔Email me any support questions: hhc3h8@gmail.com<br/>
+
+  ## Walkthrough video
+  https://drive.google.com/file/d/1DvGkApfErvUtA3-NLoveJyqJszx8pdYD/view

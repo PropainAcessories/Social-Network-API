@@ -98,28 +98,33 @@ const thoughtController = {
    //POST comments
    addReaction({ params, body }, res) {
     Thought.findOneAndUpdate(
-        { _id: params.ThoughtId },
+        { _id: params.thoughtId },
         { $addToSet: { reactions: body } },
-        {new: true, runValidators: true}
+        { new: true, runValidators: true }
     )
     .then(dbThoughtData => {
+        console.log(dbThoughtData)
         if(!dbThoughtData) {
-            res.status(404).json({ message: 'No Post Found '});
+            res.status(404).json({ message: 'No Post Found' });
             return;
         }
         res.status(200).json(dbThoughtData);
     })
-    .catch(err => res.status(500).json(err));
+    .catch(err => {
+        res.status(500).json(err)
+        console.log(err);
+    });
    },
    
    //DELETE comments
    deleteReaction({ params, body }, res) {
     Thought.findOneAndUpdate(
-        { _id: params.ThoughtId },
+        { _id: params.thoughtId },
         { $pull: { reactions: { reactionId: body.reactionId } } },
         { new: true, runValidators: true }
     )
     .then(dbThoughtData => {
+        console.log(dbThoughtData)
         if(!dbThoughtData) {
             res.status(404).json({ message: 'No Post Found' });
             return;
