@@ -3,15 +3,21 @@ const { db } = require('../models/User');
 // GET all posts
 const thoughtController = {
    getAllThoughts(req, res) {
-    try {
-        const thoughtData = Thought.find({})
+
+        Thought.find({})
         .populate({ path: 'reactions', select: '-__v' })
         .select('-__v')
-
-        res.status(200).json(thoughtData)
-    } catch (err) {
-        res.status(500).json(err)
-    }
+        .then(dbThoughtData => {
+            if (!dbThoughtData) {
+                res.status(404).json({ message: ':(' });
+                return;
+            }
+            res.status(200).json(dbThoughtData);
+        })
+        .catch(err => {
+            res.status(500).json(err);
+            console.log(err);
+        })
    },
 
    // GET route by ID
